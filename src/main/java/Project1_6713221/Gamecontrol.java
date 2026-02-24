@@ -23,7 +23,7 @@ public class Gamecontrol {
         }
         while (cansolve&&!solved) // เข็คว่าแก้ได้จริงรึเปล่าได้ค่อยปลิ้นออกมา
         {
-
+            //auto mode เอามาใส่ตรงนี้
         }
         if(solved) System.out.println("Done !!!");
     }
