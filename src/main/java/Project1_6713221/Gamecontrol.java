@@ -1,5 +1,7 @@
 package Project1_6713221;
 
+import java.text.NumberFormat;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Gamecontrol {
@@ -37,10 +39,15 @@ class inputHandler{ // ตัวรับinput ต่างๆ จาก user
     {
         int input=0;
         while(input<2) {
-            System.out.printf("Enter number of white marbles = ");
-            input = in.nextInt();
-            in.nextLine(); // เคลียร์ enter
-        }
+                try{
+                System.out.printf("Enter number of white marbles = ");
+                input = in.nextInt();
+                    in.nextLine();// เคลียร์ enter
+            }catch (InputMismatchException e){
+                System.out.println("type only number!!!");
+                in.next(); //clear แสกนเนอร์
+                }
+            }
         return input;
     }
     public String getMarbleid()
