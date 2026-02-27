@@ -8,6 +8,7 @@ public class Gamecontrol {
     private inputHandler input;
     private boolean solved = false;
     private boolean cansolve = false;
+    private Board board;
     private int i=0;
     public Gamecontrol() {
         input = new inputHandler();
@@ -16,11 +17,18 @@ public class Gamecontrol {
     public void runMannualMode() // เริ่มรับค่าinput ศูนรวมจิตใจ
     {
         int boadsize = input.getN();// เอาตัวแปรที่ไปสร้างบอร์ดมาใส่
+        board = new Board(boadsize);
+        board.display();
         while (!solved) {
             System.out.printf("Step %3d >> Enter Marble ID or A to switch to auto mode = ", i);
             String marbleid = input.getMarbleid(); // เอาค่าไปสลับบอร์ดต่อ
             if (marbleid.equalsIgnoreCase("A"))
                 break;
+            String move = board.move(marbleid);
+            if(move==null)move="cannot move"+marbleid;
+            System.out.println(move);
+            board.display();
+            solved=board.isGoal();
             i++;
         }
         while (cansolve&&!solved) // เข็คว่าแก้ได้จริงรึเปล่าได้ค่อยปลิ้นออกมา
