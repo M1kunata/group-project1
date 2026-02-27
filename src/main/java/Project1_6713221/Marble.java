@@ -1,5 +1,10 @@
 package Project1_6713221;
 
+//6713115 Kornchanok Phutrakul
+//6713117 Nuttha Limkhunthammo
+//6713221 jakkarin roemtangsakul
+
+
 public class Marble {
     private String id;       // e.g. "w0", "w1", "b0", "b1"
     private String color;    // ขาว ดำ
