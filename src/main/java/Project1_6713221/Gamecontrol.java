@@ -1,13 +1,15 @@
 package Project1_6713221;
 
-import java.text.NumberFormat;
+//6713115 Kornchanok Phutrakul
+//6713117 Nuttha Limkhunthammo
+//6713221 jakkarin roemtangsakul
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Gamecontrol {
     private inputHandler input;
     private boolean solved = false;
-    private boolean cansolve = false;
     private Board board;
     private int i=0;
     public Gamecontrol() {
@@ -18,24 +20,42 @@ public class Gamecontrol {
     {
         int boadsize = input.getN();// เอาตัวแปรที่ไปสร้างบอร์ดมาใส่
         board = new Board(boadsize);
+        System.out.print("Initial >> ");
         board.display();
         while (!solved) {
             System.out.printf("Step %3d >> Enter Marble ID or A to switch to auto mode = ", i);
             String marbleid = input.getMarbleid(); // เอาค่าไปสลับบอร์ดต่อ
-            if (marbleid.equalsIgnoreCase("A"))
-                break;
-            String move = board.move(marbleid);
-            if(move==null)move="cannot move"+marbleid;
-            System.out.println(move);
-            board.display();
-            solved=board.isGoal();
-            i++;
-        }
-        while (cansolve&&!solved) // เข็คว่าแก้ได้จริงรึเปล่าได้ค่อยปลิ้นออกมา
-        {
-            //auto mode เอามาใส่ตรงนี้
+            if (marbleid.equalsIgnoreCase("A")) {
+                runAutoMode();
+                return;
+            }
+            if (!board.isMovable(marbleid)) {
+                System.out.println("Cannot move " + marbleid);
+            } else {
+                String move = board.move(marbleid);
+                System.out.println(move);
+                board.display();
+                solved = board.isGoal();
+                i++;
+            }
         }
         if(solved) System.out.println("Done !!!");
+    }
+
+    public void runAutoMode() {
+        Solver solver = new Solver();
+        boolean hasSolution = solver.solve(board);
+        if (!hasSolution) {
+            System.out.println("No solution !!");
+            return;
+        }
+        int autoStep = 1;
+        for (Moverecord record : solver.getSolution()) {
+            board.move(record.getMarbleId());
+            System.out.printf("Auto %3d >> %s%n", autoStep++, record.getMarbleId() + " (" + record.getMoveType() + ")");
+            board.display();
+        }
+        System.out.println("Done !!!");
     }
 }
 class inputHandler{ // ตัวรับinput ต่างๆ จาก user

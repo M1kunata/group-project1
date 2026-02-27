@@ -1,4 +1,9 @@
 package Project1_6713221;
+
+//6713115 Kornchanok Phutrakul
+//6713117 Nuttha Limkhunthammo
+//6713221 jakkarin roemtangsakul
+
 import java.util.ArrayList;
 import java.util.List;
 public class Board {
@@ -64,17 +69,20 @@ public class Board {
         Marble m = getMarbleById(marbleId);
         if (m == null) return false;
         int pos = m.getPosition();
+        int size = cells.length;
 
         if (m.isWhite()) {
             // เดินขวา 1 ช่อง
-            if (pos + 1 == emptyPos) return true;
+            if (pos + 1 < size && pos + 1 == emptyPos) return true;
             // กระโดดข้ามหินดำไปขวา
-            if (pos + 2 == emptyPos && cells[pos + 1] != null && cells[pos + 1].isBlack()) return true;
+            if (pos + 2 < size && pos + 2 == emptyPos
+                    && cells[pos + 1] != null && cells[pos + 1].isBlack()) return true;
         } else {
             // เดินซ้าย 1 ช่อง
-            if (pos - 1 == emptyPos) return true;
+            if (pos - 1 >= 0 && pos - 1 == emptyPos) return true;
             // กระโดดข้ามหินขาวไปซ้าย
-            if (pos - 2 == emptyPos && cells[pos - 1] != null && cells[pos - 1].isWhite()) return true;
+            if (pos - 2 >= 0 && pos - 2 == emptyPos
+                    && cells[pos - 1] != null && cells[pos - 1].isWhite()) return true;
         }
         return false;
     }
@@ -135,6 +143,7 @@ public class Board {
 
     // เช็ค goal state: หินดำอยู่ซ้าย หินขาวอยู่ขวา
     public boolean isGoal() {
+        if (cells[n] != null) return false;
         for (int i = 0; i < n; i++) {
             if (cells[i] == null || !cells[i].isBlack()) return false;
         }

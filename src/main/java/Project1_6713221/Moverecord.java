@@ -1,4 +1,9 @@
 package Project1_6713221;
+
+//6713115 Kornchanok Phutrakul
+//6713117 Nuttha Limkhunthammo
+//6713221 jakkarin roemtangsakul
+
 import java.util.List;
 public class Moverecord {
     private String marbleId;       // หินที่เดินใน step นี้
