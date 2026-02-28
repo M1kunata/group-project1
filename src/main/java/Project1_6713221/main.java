@@ -4,13 +4,20 @@ package Project1_6713221;
 //6713117 Nuttha Limkhunthammo
 //6713221 jakkarin roemtangsakul
 
+import java.io.*;
 import java.util.Scanner;
 
 public class main {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
+        PrintStream buffered = new PrintStream(
+            new BufferedOutputStream(System.out, 65536), false);
+        System.setOut(buffered);
+
         main mainapp = new main();
         mainapp.gamestart();
+
+        System.out.flush();
     }
     public void gamestart() {
         String restart="";
