@@ -5,12 +5,18 @@ package Project1_6713221;
 //6713221 jakkarin roemtangsakul
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 public class Board {
     private int n;
     // cells[i] = Marble object or null (empty space)
     private Marble[] cells;
     private int emptyPos;
+
+    // index สำหรับค้นหา Marble จาก ID → O(1) แทน O(n)
+    private Map<String, Marble> marbleIndex = new HashMap<>();
 
     // Constructor: สร้างกระดานเริ่มต้น w0 w1 ... __ b0 b1 ...
     public Board(int n) {
@@ -25,6 +31,7 @@ public class Board {
         for (int i = 0; i < n; i++) {
             Marble m = new Marble("w" + i, "white", i);
             cells[i] = m;
+            marbleIndex.put(m.getId(), m);
         }
         // ช่องว่างตรงกลาง
         cells[n] = null;
@@ -33,6 +40,7 @@ public class Board {
         for (int i = 0; i < n; i++) {
             Marble m = new Marble("b" + i, "black", n + 1 + i);
             cells[n + 1 + i] = m;
+            marbleIndex.put(m.getId(), m);
         }
     }
 
@@ -42,7 +50,13 @@ public class Board {
         this.emptyPos = emptyPos;
         this.cells = new Marble[cells.length];
         for (int i = 0; i < cells.length; i++) {
-            this.cells[i] = (cells[i] == null) ? null : cells[i].clone();
+            if (cells[i] == null) {
+                this.cells[i] = null;
+            } else {
+                Marble m = cells[i].clone();
+                this.cells[i] = m;
+                this.marbleIndex.put(m.getId(), m);
+            }
         }
     }
 
@@ -52,11 +66,9 @@ public class Board {
     }
 
     // ดึง Marble จาก ID เช่น "w0"
+    // การปรับปรุง: ใช้ HashMap → O(1) แทน O(n) loop
     public Marble getMarbleById(String id) {
-        for (Marble m : cells) {
-            if (m != null && m.getId().equals(id)) return m;
-        }
-        return null;
+        return marbleIndex.get(id);
     }
 
     public int getEmptyPos() { return emptyPos; }
@@ -72,15 +84,11 @@ public class Board {
         int size = cells.length;
 
         if (m.isWhite()) {
-            // เดินขวา 1 ช่อง
             if (pos + 1 < size && pos + 1 == emptyPos) return true;
-            // กระโดดข้ามหินดำไปขวา
             if (pos + 2 < size && pos + 2 == emptyPos
                     && cells[pos + 1] != null && cells[pos + 1].isBlack()) return true;
         } else {
-            // เดินซ้าย 1 ช่อง
             if (pos - 1 >= 0 && pos - 1 == emptyPos) return true;
-            // กระโดดข้ามหินขาวไปซ้าย
             if (pos - 2 >= 0 && pos - 2 == emptyPos
                     && cells[pos - 1] != null && cells[pos - 1].isWhite()) return true;
         }
@@ -96,20 +104,11 @@ public class Board {
         String result;
 
         if (m.isWhite()) {
-            if (pos + 1 == emptyPos) {
-                result = "Move right";
-            } else {
-                result = "Jump right";
-            }
+            result = (pos + 1 == emptyPos) ? "Move right" : "Jump right";
         } else {
-            if (pos - 1 == emptyPos) {
-                result = "Move left";
-            } else {
-                result = "Jump left";
-            }
+            result = (pos - 1 == emptyPos) ? "Move left" : "Jump left";
         }
 
-        // สลับตำแหน่งหินกับช่องว่าง
         cells[emptyPos] = m;
         cells[pos] = null;
         m.setPosition(emptyPos);
@@ -131,13 +130,28 @@ public class Board {
     }
 
     // คืน list ของ marble ID ที่เดินได้ทั้งหมด
+    // การปรับปรุง: เช็คเฉพาะช่องรอบ emptyPos แทนการวน loop ทั้ง array
+    // หินที่เดินได้มีแค่ไม่เกิน 4 ตัวเสมอ (emptyPos±1 และ emptyPos±2)
     public List<String> getMovableMarbles() {
-        List<String> movable = new ArrayList<>();
-        for (Marble m : cells) {
-            if (m != null && isMovable(m.getId())) {
-                movable.add(m.getId());
-            }
-        }
+        List<String> movable = new ArrayList<>(4);
+        int size = cells.length;
+
+        // หินขาวที่อยู่ทางซ้ายของ emptyPos (เดินขวาได้)
+        if (emptyPos - 1 >= 0 && cells[emptyPos - 1] != null && cells[emptyPos - 1].isWhite())
+            movable.add(cells[emptyPos - 1].getId());
+
+        if (emptyPos - 2 >= 0 && cells[emptyPos - 2] != null && cells[emptyPos - 2].isWhite()
+                && cells[emptyPos - 1] != null && cells[emptyPos - 1].isBlack())
+            movable.add(cells[emptyPos - 2].getId());
+
+        // หินดำที่อยู่ทางขวาของ emptyPos (เดินซ้ายได้)
+        if (emptyPos + 1 < size && cells[emptyPos + 1] != null && cells[emptyPos + 1].isBlack())
+            movable.add(cells[emptyPos + 1].getId());
+
+        if (emptyPos + 2 < size && cells[emptyPos + 2] != null && cells[emptyPos + 2].isBlack()
+                && cells[emptyPos + 1] != null && cells[emptyPos + 1].isWhite())
+            movable.add(cells[emptyPos + 2].getId());
+
         return movable;
     }
 

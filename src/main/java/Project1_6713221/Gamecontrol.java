@@ -3,28 +3,32 @@ package Project1_6713221;
 //6713115 Kornchanok Phutrakul
 //6713117 Nuttha Limkhunthammo
 //6713221 jakkarin roemtangsakul
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Gamecontrol {
+
     private inputHandler input;
     private boolean solved = false;
     private Board board;
-    private int i=0;
+    private int i = 0;
+
     public Gamecontrol() {
         input = new inputHandler();
     }
-    public inputHandler getInput() {return input;}
-    public void runMannualMode() // เริ่มรับค่าinput ศูนรวมจิตใจ
-    {
-        int boadsize = input.getN();// เอาตัวแปรที่ไปสร้างบอร์ดมาใส่
+
+    public inputHandler getInput() {
+        return input;
+    }
+
+    public void runMannualMode() {
+        int boadsize = input.getN();
         board = new Board(boadsize);
         System.out.print("Initial >> ");
         board.display();
         while (!solved) {
             System.out.printf("Step %3d >> Enter Marble ID or A to switch to auto mode = ", i);
-            String marbleid = input.getMarbleid(); // เอาค่าไปสลับบอร์ดต่อ
+            String marbleid = input.getMarbleid();
             if (marbleid.equalsIgnoreCase("A")) {
                 runAutoMode();
                 return;
@@ -39,12 +43,18 @@ public class Gamecontrol {
                 i++;
             }
         }
-        if(solved) System.out.println("Done !!!");
+        if (solved) {
+            System.out.println("Done !!!");
+        }
     }
 
     public void runAutoMode() {
         Solver solver = new Solver();
+        System.out.println("Solving..."); // เพิ่มบรรทัดนี้
+        System.out.flush();               // เพิ่มบรรทัดนี้
         boolean hasSolution = solver.solve(board);
+        System.out.println("Solved! Steps: " + solver.getSolution().size()); // เพิ่มบรรทัดนี้
+        System.out.flush();               // เพิ่มบรรทัดนี้
         if (!hasSolution) {
             System.out.println("No solution !!");
             return;
@@ -58,37 +68,43 @@ public class Gamecontrol {
         System.out.println("Done !!!");
     }
 }
-class inputHandler{ // ตัวรับinput ต่างๆ จาก user
+
+class inputHandler {
+
     private Scanner in;
+
     public inputHandler() {
         in = new Scanner(System.in);
     }
-    public int getN()
-    {
-        int input=0;
-        while(input<2) {
-                try{
+
+    public int getN() {
+        int input = 0;
+        while (input < 2) {
+            try {
                 System.out.printf("Enter number of white marbles = ");
+                System.out.flush();
                 input = in.nextInt();
-                    in.nextLine();// เคลียร์ enter
-            }catch (InputMismatchException e){
+                in.nextLine();
+            } catch (InputMismatchException e) {
                 System.out.println("type only number!!!");
-                in.next(); //clear แสกนเนอร์
-                }
+                in.next();
             }
+        }
         return input;
     }
-    public String getMarbleid()
-    {
-        String input="";
+
+    public String getMarbleid() {
+        String input = "";
+        System.out.flush();
         input = in.nextLine();
         return input;
     }
-    public String getrestart()
-    {
-        String input="";
-        System.out.printf("%s\n","*".repeat(30));
+
+    public String getrestart() {
+        String input = "";
+        System.out.printf("%s\n", "*".repeat(30));
         System.out.println("type any button to play again.else type q:");
+        System.out.flush();
         input = in.nextLine();
         return input;
     }
